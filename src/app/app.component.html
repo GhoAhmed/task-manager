@@ -1,0 +1,99 @@
+<div class="app-container">
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="title">
+        <span class="icon">✓</span>
+        Task Manager
+      </h1>
+      <p class="subtitle">Stay organized and productive</p>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-container" *ngIf="tasks.length > 0">
+      <div class="stat-card">
+        <div class="stat-value">{{ tasks.length }}</div>
+        <div class="stat-label">Total Tasks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ pendingTasksCount }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card stat-card-success">
+        <div class="stat-value">{{ completedTasksCount }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <!-- Task Form -->
+    <div class="card form-card">
+      <h2 class="card-title">
+        {{ editingTask ? 'Edit Task' : 'Create New Task' }}
+      </h2>
+
+      <form (ngSubmit)="saveTask()" class="task-form">
+        <div class="form-group">
+          <label for="taskTitle">Task Title *</label>
+          <input id="taskTitle" type="text" [(ngModel)]="taskTitle" name="title" placeholder="Enter task title"
+            class="form-input" required />
+        </div>
+
+        <div class="form-group">
+          <label for="taskDescription">Description</label>
+          <textarea id="taskDescription" [(ngModel)]="taskDescription" name="description"
+            placeholder="Add task details (optional)" class="form-textarea" rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!taskTitle.trim()">
+            <span class="btn-icon">{{ editingTask ? '✓' : '+' }}</span>
+            {{ editingTask ? 'Update Task' : 'Add Task' }}
+          </button>
+          <button *ngIf="editingTask" type="button" (click)="cancelEdit()" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Task List -->
+    <div class="tasks-section">
+      <h2 class="section-title" *ngIf="tasks.length > 0">Your Tasks</h2>
+
+      <div *ngIf="tasks.length > 0; else noTasks" class="task-list">
+        <div *ngFor="let task of tasks" class="task-card" [class.task-completed]="task.completed">
+          <div class="task-checkbox">
+            <input type="checkbox" [checked]="task.completed" (change)="toggleCompletion(task)"
+              [id]="'task-' + task.id" />
+            <label [for]="'task-' + task.id"></label>
+          </div>
+
+          <div class="task-content">
+            <h3 class="task-title">{{ task.title }}</h3>
+            <p class="task-description" *ngIf="task.description">
+              {{ task.description }}
+            </p>
+          </div>
+
+          <div class="task-actions">
+            <button (click)="editTask(task)" class="btn-icon-action btn-edit" title="Edit task"
+              [disabled]="task.completed">
+              <span>✎</span>
+            </button>
+            <button (click)="deleteTask(task.id)" class="btn-icon-action btn-delete" title="Delete task">
+              <span>✕</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTasks>
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3>No tasks yet</h3>
+          <p>Create your first task to get started!</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
